@@ -1,33 +1,20 @@
-# react-native-ranking-leaderboard
+# 🏆 react-native-ranking-leaderboard
 
-Customizable leaderboard for react native mobile apps
+**Customizable and modern leaderboard component for React Native apps.**
 
-## Installation
+![Leaderboard Example](https://user-images.githubusercontent.com/your-image-link.png)
 
-```sh
-npm install react-native-ranking-leaderboard
-```
+## 🎯 Features
 
-## Usage
-
-
-```js
-import { multiply } from 'react-native-ranking-leaderboard';
-
-// ...
-
-const result = await multiply(3, 7);
-```
-
-
-## Contributing
-
-See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
-
-## License
-
-MIT
+- 🥇 Podium for top 3 users
+- 📋 Scrollable leaderboard list for other users
+- 🎨 Fully customizable styles via props
 
 ---
 
-Made with [create-react-native-library](https://github.com/callstack/react-native-builder-bob)
+## 📦 Installation
+
+```bash
+yarn add react-native-ranking-leaderboard
+# or
+npm install react-native-ranking-leaderboard
