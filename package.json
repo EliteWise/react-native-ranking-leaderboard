@@ -1,6 +1,6 @@
 {
   "name": "react-native-ranking-leaderboard",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Customizable leaderboard for react native mobile apps",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
