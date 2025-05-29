@@ -5,17 +5,9 @@
 ## Features
 
 - 🥇 Podium for top 3 users
-- 📋 Scrollable leaderboard list for other users
+- 📋 Scrollable list
+- 👤 Tap a user to open their profile
 - 🎨 Fully customizable styles via props
-
-
-## Installation
-
-```bash
-yarn add react-native-ranking-leaderboard
-# or
-npm install react-native-ranking-leaderboard
-```
 
 ## Preview
 
@@ -32,6 +24,14 @@ npm install react-native-ranking-leaderboard
     </td>
   </tr>
 </table>
+
+## Installation
+
+```bash
+yarn add react-native-ranking-leaderboard
+# or
+npm install react-native-ranking-leaderboard
+```
 
 ## How to use it?
 
