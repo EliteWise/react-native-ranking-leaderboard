@@ -12,6 +12,20 @@ export interface LeaderboardStyle {
     second?: ViewStyle;
     third?: ViewStyle;
   };
+  profileStyle?: ProfileStyle;
+}
+
+export interface ProfileStyle {
+  overlayStyle?: ViewStyle;
+  modalStyle?: ViewStyle;
+  avatarStyle?: ImageStyle;
+  nameStyle?: TextStyle;
+  pointsStyle?: TextStyle;
+  closeButtonStyle?: ViewStyle;
+  closeButtonTextStyle?: TextStyle;
+
+  pointsLabel?: string;
+  closeLabel?: string;
 }
 
 export default interface LeaderboardEntry {

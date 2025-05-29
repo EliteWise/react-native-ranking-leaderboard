@@ -1,6 +1,15 @@
-import { FlatList, StyleSheet, Text, View, Image } from 'react-native';
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
 import type LeaderboardEntry from './leaderboard';
 import type { LeaderboardStyle } from './leaderboard';
+import { useState } from 'react';
+import { LeaderboardProfile } from './profile';
 
 type LeaderboardProps = {
   entries: LeaderboardEntry[];
@@ -13,6 +22,11 @@ export function Leaderboard({
   style,
   showPodium = true,
 }: LeaderboardProps) {
+  const [selectedUser, setSelectedUser] = useState<LeaderboardEntry | null>(
+    null
+  );
+  const [modalVisible, setModalVisible] = useState(false);
+
   if (!entries || entries.length === 0) {
     return (
       <View
@@ -107,7 +121,14 @@ export function Leaderboard({
         }
         contentContainerStyle={styles.leaderboardList}
         renderItem={({ item, index }) => (
-          <View style={[styles.leaderboardItem, style?.itemStyle]}>
+          <TouchableOpacity
+            style={[styles.leaderboardItem, style?.itemStyle]}
+            activeOpacity={0.8}
+            onPress={() => {
+              setSelectedUser(item);
+              setModalVisible(true);
+            }}
+          >
             <Text style={[styles.rank, style?.rankStyle]}>
               {showPodium ? index + 4 : index + 1}
             </Text>
@@ -129,8 +150,17 @@ export function Leaderboard({
             <Text style={[styles.itemPoints, style?.pointStyle]}>
               {item.points}
             </Text>
-          </View>
+          </TouchableOpacity>
         )}
+      />
+      <LeaderboardProfile
+        visible={modalVisible}
+        user={selectedUser}
+        onClose={() => {
+          setModalVisible(false);
+          setSelectedUser(null);
+        }}
+        style={style?.profileStyle}
       />
     </View>
   );
