@@ -19,10 +19,19 @@ npm install react-native-ranking-leaderboard
 
 ## Preview
 
-![Demo](./src/assets/leaderboard.gif)
-
-|---------|---------|
-| ![default](./src/assets/default-style.png) | ![dark](./src/assets/dark-style.png) |
+<table>
+  <tr>
+    <td>
+      <img src="./src/assets/leaderboard.gif" alt="Demo" width="300" />
+    </td>
+    <td>
+      <img src="./src/assets/default-style.png" alt="default" width="300" />
+    </td>
+    <td>
+      <img src="./src/assets/dark-style.png" alt="dark" width="300" />
+    </td>
+  </tr>
+</table>
 
 ## How to use it?
 
