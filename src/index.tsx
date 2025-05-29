@@ -47,7 +47,13 @@ export function Leaderboard({
         <View style={styles.podiumContainer}>
           {/* 2nd place */}
           {entries[1] && (
-            <View style={styles.podiumColumn}>
+            <TouchableOpacity
+              style={styles.podiumColumn}
+              onPress={() => {
+                setSelectedUser(entries[1] ?? null);
+                setModalVisible(true);
+              }}
+            >
               {entries[1]?.picture && (
                 <Image
                   source={{ uri: entries[1]?.picture || '' }}
@@ -64,12 +70,18 @@ export function Leaderboard({
                 <Text style={styles.podiumRank}>2</Text>
               </View>
               <Text style={styles.playerName}>{entries[1]?.name}</Text>
-            </View>
+            </TouchableOpacity>
           )}
 
           {/* 1st place */}
           {entries[0] && (
-            <View style={styles.podiumColumn}>
+            <TouchableOpacity
+              style={styles.podiumColumn}
+              onPress={() => {
+                setSelectedUser(entries[0] ?? null);
+                setModalVisible(true);
+              }}
+            >
               {entries[0]?.picture && (
                 <Image
                   source={{ uri: entries[0]?.picture || '' }}
@@ -86,12 +98,18 @@ export function Leaderboard({
                 <Text style={styles.podiumRank}>1</Text>
               </View>
               <Text style={styles.playerName}>{entries[0]?.name}</Text>
-            </View>
+            </TouchableOpacity>
           )}
 
           {/* 3rd place */}
           {entries[2] && (
-            <View style={styles.podiumColumn}>
+            <TouchableOpacity
+              style={styles.podiumColumn}
+              onPress={() => {
+                setSelectedUser(entries[2] ?? null);
+                setModalVisible(true);
+              }}
+            >
               {entries[2]?.picture && (
                 <Image
                   source={{ uri: entries[2]?.picture || '' }}
@@ -108,7 +126,7 @@ export function Leaderboard({
                 <Text style={styles.podiumRank}>3</Text>
               </View>
               <Text style={styles.playerName}>{entries[2]?.name}</Text>
-            </View>
+            </TouchableOpacity>
           )}
         </View>
       )}
