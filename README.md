@@ -65,8 +65,10 @@ const data = [
 />
 ```
 
+## Advanced Props
+
 ```tsx
-# Adding your custom profile component
+// Adding your custom profile component
 
 type CustomProfileProps = {
   user: LeaderboardEntry | null;
