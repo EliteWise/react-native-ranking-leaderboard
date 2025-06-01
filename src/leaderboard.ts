@@ -16,6 +16,11 @@ export interface LeaderboardStyle {
 }
 
 export interface ProfileStyle {
+  showAvatar?: boolean;
+  showName?: boolean;
+  showPoints?: boolean;
+  showCloseButton?: boolean;
+
   overlayStyle?: ViewStyle;
   modalStyle?: ViewStyle;
   avatarStyle?: ImageStyle;
@@ -23,6 +28,7 @@ export interface ProfileStyle {
   pointsStyle?: TextStyle;
   closeButtonStyle?: ViewStyle;
   closeButtonTextStyle?: TextStyle;
+  renderCustomContent?: (user: LeaderboardEntry) => React.ReactNode;
 
   pointsLabel?: string;
   closeLabel?: string;

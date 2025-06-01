@@ -45,7 +45,7 @@ const data = [
 ];
 ```
 
-```ts
+```tsx
 <Leaderboard
   entries={data}
   showPodium={true}
@@ -62,6 +62,39 @@ const data = [
     pointStyle: { fontWeight: 'bold' },
     avatarStyle: { borderRadius: 18 },
   }}
+/>
+```
+
+```tsx
+# Adding your custom profile component
+
+type CustomProfileProps = {
+  user: LeaderboardEntry | null;
+  onClose: () => void;
+};
+
+const CustomProfile = ({ user, onClose }: CustomProfileProps) => {
+  if (!user) return null;
+
+  return (
+    <Modal visible={true} onRequestClose={onClose} transparent animationType="fade">
+      <TouchableWithoutFeedback onPress={onClose}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.6)' }}>
+          <TouchableWithoutFeedback>
+            <View style={{ backgroundColor: 'white', padding: 80, borderRadius: 12, alignItems: 'center' }}>
+              <Text>Add anything you want! 🧡</Text>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      </TouchableWithoutFeedback>
+    </Modal>
+  );
+}
+
+<Leaderboard
+  entries={data}
+  showPodium={false}
+  customProfile={(user, onClose) => <CustomProfile user={user} onClose={onClose} />}
 />
 ```
 

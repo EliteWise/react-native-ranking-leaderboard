@@ -14,13 +14,20 @@ import { LeaderboardProfile } from './profile';
 type LeaderboardProps = {
   entries: LeaderboardEntry[];
   showPodium?: boolean;
+  enableProfiles?: boolean;
   style?: LeaderboardStyle;
+  customProfile?: (
+    user: LeaderboardEntry | null,
+    onClose: () => void
+  ) => React.ReactNode;
 };
 
 export function Leaderboard({
   entries,
   style,
   showPodium = true,
+  enableProfiles = true,
+  customProfile,
 }: LeaderboardProps) {
   const [selectedUser, setSelectedUser] = useState<LeaderboardEntry | null>(
     null
@@ -50,8 +57,10 @@ export function Leaderboard({
             <TouchableOpacity
               style={styles.podiumColumn}
               onPress={() => {
-                setSelectedUser(entries[1] ?? null);
-                setModalVisible(true);
+                if (enableProfiles) {
+                  setSelectedUser(entries[1] ?? null);
+                  setModalVisible(true);
+                }
               }}
             >
               {entries[1]?.picture && (
@@ -78,8 +87,10 @@ export function Leaderboard({
             <TouchableOpacity
               style={styles.podiumColumn}
               onPress={() => {
-                setSelectedUser(entries[0] ?? null);
-                setModalVisible(true);
+                if (enableProfiles) {
+                  setSelectedUser(entries[0] ?? null);
+                  setModalVisible(true);
+                }
               }}
             >
               {entries[0]?.picture && (
@@ -106,8 +117,10 @@ export function Leaderboard({
             <TouchableOpacity
               style={styles.podiumColumn}
               onPress={() => {
-                setSelectedUser(entries[2] ?? null);
-                setModalVisible(true);
+                if (enableProfiles) {
+                  setSelectedUser(entries[2] ?? null);
+                  setModalVisible(true);
+                }
               }}
             >
               {entries[2]?.picture && (
@@ -143,8 +156,10 @@ export function Leaderboard({
             style={[styles.leaderboardItem, style?.itemStyle]}
             activeOpacity={0.8}
             onPress={() => {
-              setSelectedUser(item);
-              setModalVisible(true);
+              if (enableProfiles) {
+                setSelectedUser(item);
+                setModalVisible(true);
+              }
             }}
           >
             <Text style={[styles.rank, style?.rankStyle]}>
@@ -171,15 +186,22 @@ export function Leaderboard({
           </TouchableOpacity>
         )}
       />
-      <LeaderboardProfile
-        visible={modalVisible}
-        user={selectedUser}
-        onClose={() => {
+      {customProfile ? (
+        customProfile(selectedUser, () => {
           setModalVisible(false);
           setSelectedUser(null);
-        }}
-        style={style?.profileStyle}
-      />
+        })
+      ) : (
+        <LeaderboardProfile
+          visible={modalVisible}
+          user={selectedUser}
+          onClose={() => {
+            setModalVisible(false);
+            setSelectedUser(null);
+          }}
+          style={style?.profileStyle}
+        />
+      )}
     </View>
   );
 }

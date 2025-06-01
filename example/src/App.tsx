@@ -1,6 +1,6 @@
 import { Leaderboard } from 'react-native-ranking-leaderboard';
 import type LeaderboardEntry from '../../src/leaderboard';
-import type { LeaderboardStyle } from '../../src/leaderboard';
+import { Modal, Text, TouchableWithoutFeedback, View } from 'react-native';
 
 export default function App() {
   const data: LeaderboardEntry[] = [
@@ -66,6 +66,7 @@ export default function App() {
     },
   ];
 
+  // eslint-disable-next-line no-unused-vars
   const darkStyle = {
     containerStyle: {
       backgroundColor: '#121212',
@@ -136,11 +137,57 @@ export default function App() {
     },
   };
 
+  console.log(darkStyle);
+
+  type CustomProfileProps = {
+    user: LeaderboardEntry | null;
+    onClose: () => void;
+  };
+
+  const CustomProfile = ({ user, onClose }: CustomProfileProps) => {
+    if (!user) return null;
+
+    return (
+      <Modal
+        visible={true}
+        onRequestClose={onClose}
+        transparent
+        animationType="fade"
+      >
+        <TouchableWithoutFeedback onPress={onClose}>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: 'rgba(0,0,0,0.6)',
+            }}
+          >
+            <TouchableWithoutFeedback>
+              <View
+                style={{
+                  backgroundColor: 'white',
+                  padding: 80,
+                  borderRadius: 12,
+                  alignItems: 'center',
+                }}
+              >
+                <Text>Add anything you want! 🧡</Text>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+    );
+  };
+
   return (
     <Leaderboard
       entries={data}
-      showPodium={true}
-      style={darkStyle as LeaderboardStyle}
+      showPodium={false}
+      customProfile={(user, onClose) => (
+        <CustomProfile user={user} onClose={onClose} />
+      )}
     />
   );
 }

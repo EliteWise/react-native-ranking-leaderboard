@@ -32,23 +32,37 @@ export function LeaderboardProfile({
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={[styles.overlay, style.overlayStyle]}>
           <View style={[styles.modalContent, style.modalStyle]}>
-            <Image
-              source={{ uri: user.picture }}
-              style={[styles.avatar, style.avatarStyle]}
-            />
-            <Text style={[styles.name, style.nameStyle]}>{user.name}</Text>
-            <Text style={[styles.points, style.pointsStyle]}>
-              {pointsLabel}: {user.points}
-            </Text>
+            {style.showAvatar != false && (
+              <Image
+                source={{ uri: user.picture }}
+                style={[styles.avatar, style.avatarStyle]}
+              />
+            )}
 
-            <TouchableOpacity
-              onPress={onClose}
-              style={[styles.closeIconButton, style.closeButtonStyle]}
-            >
-              <Text style={[styles.closeIconText, style.closeButtonTextStyle]}>
-                ×
+            {style.showName !== false && (
+              <Text style={[styles.name, style.nameStyle]}>{user.name}</Text>
+            )}
+
+            {style.showPoints !== false && (
+              <Text style={[styles.points, style.pointsStyle]}>
+                {pointsLabel}: {user.points}
               </Text>
-            </TouchableOpacity>
+            )}
+
+            {style.renderCustomContent?.(user)}
+
+            {style.showCloseButton !== false && (
+              <TouchableOpacity
+                onPress={onClose}
+                style={[styles.closeIconButton, style.closeButtonStyle]}
+              >
+                <Text
+                  style={[styles.closeIconText, style.closeButtonTextStyle]}
+                >
+                  ×
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </TouchableWithoutFeedback>
