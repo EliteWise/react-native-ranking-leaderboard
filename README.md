@@ -2,6 +2,8 @@
 
 **Customizable and modern leaderboard component for React Native apps.**
 
+I’ve always been obsessed with rankings in games — So I decided to turn that obsession into the best leaderboard library.
+
 ## Features
 
 - 🥇 Podium for top 3 users
