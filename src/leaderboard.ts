@@ -13,6 +13,7 @@ export interface LeaderboardStyle {
     third?: ViewStyle;
   };
   profileStyle?: ProfileStyle;
+  searchBarStyle?: ViewStyle;
 }
 
 export interface ProfileStyle {

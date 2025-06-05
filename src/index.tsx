@@ -5,6 +5,7 @@ import {
   View,
   Image,
   TouchableOpacity,
+  TextInput,
 } from 'react-native';
 import type LeaderboardEntry from './leaderboard';
 import type { LeaderboardStyle } from './leaderboard';
@@ -14,6 +15,7 @@ import { LeaderboardProfile } from './profile';
 type LeaderboardProps = {
   entries: LeaderboardEntry[];
   showPodium?: boolean;
+  showSearchBar?: boolean;
   enableProfiles?: boolean;
   style?: LeaderboardStyle;
   customProfile?: (
@@ -26,6 +28,7 @@ export function Leaderboard({
   entries,
   style,
   showPodium = true,
+  showSearchBar = true,
   enableProfiles = true,
   customProfile,
 }: LeaderboardProps) {
@@ -33,6 +36,32 @@ export function Leaderboard({
     null
   );
   const [modalVisible, setModalVisible] = useState(false);
+
+  // Search Bar
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredEntries = entries.filter((entry) =>
+    entry.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const podiumEntries = filteredEntries.slice(0, 3);
+  const restEntries =
+    searchQuery.trim() === '' && showPodium
+      ? filteredEntries.slice(3)
+      : filteredEntries;
+
+  const isSearchActive = searchQuery.trim() !== '';
+  const rankOffset = showPodium && !isSearchActive ? 3 : 0;
+
+  /*const [sorting, setSorting] = useState<'weekly' | 'monthly' | 'alltime'>(
+    'alltime'
+  );
+
+  const sortingTypes: ('weekly' | 'monthly' | 'alltime')[] = [
+    'weekly',
+    'monthly',
+    'alltime',
+  ];*/
 
   if (!entries || entries.length === 0) {
     return (
@@ -50,22 +79,31 @@ export function Leaderboard({
 
   return (
     <View style={[styles.container, style?.containerStyle]}>
-      {showPodium && entries.length >= 1 && (
+      {showSearchBar && (
+        <TextInput
+          style={[styles.searchBar, style?.searchBarStyle]}
+          placeholder="Search users..."
+          placeholderTextColor="#999"
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+      )}
+      {showPodium && searchQuery.trim() === '' && podiumEntries.length >= 1 && (
         <View style={styles.podiumContainer}>
           {/* 2nd place */}
-          {entries[1] && (
+          {podiumEntries[1] && (
             <TouchableOpacity
               style={styles.podiumColumn}
               onPress={() => {
                 if (enableProfiles) {
-                  setSelectedUser(entries[1] ?? null);
+                  setSelectedUser(podiumEntries[1] ?? null);
                   setModalVisible(true);
                 }
               }}
             >
-              {entries[1]?.picture && (
+              {podiumEntries[1]?.picture && (
                 <Image
-                  source={{ uri: entries[1]?.picture || '' }}
+                  source={{ uri: podiumEntries[1]?.picture || '' }}
                   style={styles.avatar}
                 />
               )}
@@ -78,24 +116,24 @@ export function Leaderboard({
               >
                 <Text style={styles.podiumRank}>2</Text>
               </View>
-              <Text style={styles.playerName}>{entries[1]?.name}</Text>
+              <Text style={styles.playerName}>{podiumEntries[1]?.name}</Text>
             </TouchableOpacity>
           )}
 
           {/* 1st place */}
-          {entries[0] && (
+          {podiumEntries[0] && (
             <TouchableOpacity
               style={styles.podiumColumn}
               onPress={() => {
                 if (enableProfiles) {
-                  setSelectedUser(entries[0] ?? null);
+                  setSelectedUser(podiumEntries[0] ?? null);
                   setModalVisible(true);
                 }
               }}
             >
-              {entries[0]?.picture && (
+              {podiumEntries[0]?.picture && (
                 <Image
-                  source={{ uri: entries[0]?.picture || '' }}
+                  source={{ uri: podiumEntries[0]?.picture || '' }}
                   style={[styles.avatar, styles.firstAvatar]}
                 />
               )}
@@ -108,24 +146,24 @@ export function Leaderboard({
               >
                 <Text style={styles.podiumRank}>1</Text>
               </View>
-              <Text style={styles.playerName}>{entries[0]?.name}</Text>
+              <Text style={styles.playerName}>{podiumEntries[0]?.name}</Text>
             </TouchableOpacity>
           )}
 
           {/* 3rd place */}
-          {entries[2] && (
+          {podiumEntries[2] && (
             <TouchableOpacity
               style={styles.podiumColumn}
               onPress={() => {
                 if (enableProfiles) {
-                  setSelectedUser(entries[2] ?? null);
+                  setSelectedUser(podiumEntries[2] ?? null);
                   setModalVisible(true);
                 }
               }}
             >
-              {entries[2]?.picture && (
+              {podiumEntries[2]?.picture && (
                 <Image
-                  source={{ uri: entries[2]?.picture || '' }}
+                  source={{ uri: podiumEntries[2]?.picture || '' }}
                   style={styles.avatar}
                 />
               )}
@@ -138,7 +176,7 @@ export function Leaderboard({
               >
                 <Text style={styles.podiumRank}>3</Text>
               </View>
-              <Text style={styles.playerName}>{entries[2]?.name}</Text>
+              <Text style={styles.playerName}>{podiumEntries[2]?.name}</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -146,12 +184,10 @@ export function Leaderboard({
 
       {/* Rest of leaderboard */}
       <FlatList
-        data={showPodium ? entries.slice(3) : entries}
-        keyExtractor={(_, index) =>
-          showPodium ? (index + 4).toString() : (index + 1).toString()
-        }
+        data={restEntries}
+        keyExtractor={(_, index) => (index + 1 + rankOffset).toString()}
         contentContainerStyle={styles.leaderboardList}
-        renderItem={({ item, index }) => (
+        renderItem={({ item }) => (
           <TouchableOpacity
             style={[styles.leaderboardItem, style?.itemStyle]}
             activeOpacity={0.8}
@@ -162,9 +198,7 @@ export function Leaderboard({
               }
             }}
           >
-            <Text style={[styles.rank, style?.rankStyle]}>
-              {showPodium ? index + 4 : index + 1}
-            </Text>
+            <Text style={[styles.rank, style?.rankStyle]}>{item.rank}</Text>
             {item.picture ? (
               <>
                 <Image
@@ -202,6 +236,13 @@ export function Leaderboard({
           style={style?.profileStyle}
         />
       )}
+      {/*<View style={styles.sortingTypesContainer}>
+        {sortingTypes.map(st => (
+          <TouchableOpacity key={st} onPress={() => setSorting(st)} style={[styles.sortingButton, sorting === st && styles.sortingButtonActive]}>
+            <Text style={[styles.sortingText, sorting === st && styles.sortingTextActive]}>{st.charAt(0).toUpperCase() + st.slice(1)}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>*/}
     </View>
   );
 }
@@ -301,5 +342,38 @@ const styles = StyleSheet.create({
     color: 'black',
     textAlign: 'center',
     marginTop: 40,
+  },
+  searchBar: {
+    backgroundColor: '#fff',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginHorizontal: 16,
+    marginBottom: 16,
+    borderRadius: 8,
+    fontSize: 16,
+    elevation: 2,
+  },
+  sortingTypesContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  sortingText: {
+    fontSize: 14,
+    fontWeight: 600,
+    textTransform: 'capitalize',
+  },
+  sortingButton: {
+    backgroundColor: '#dfe6f3',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    marginHorizontal: 4,
+    elevation: 1,
+  },
+  sortingTextActive: {
+    color: '#fff',
+  },
+  sortingButtonActive: {
+    backgroundColor: '#2c3e50',
   },
 });
