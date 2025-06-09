@@ -11,60 +11,100 @@ export default function App() {
       name: 'EliteWise',
       points: 1500,
       picture: 'https://i.pravatar.cc/60?img=3',
+      sorting: [
+        { points: 100, date: new Date(2025, 4, 1) },
+        { points: 50, date: new Date(2025, 4, 2) },
+      ],
     },
     {
       rank: 2,
       name: 'Bob',
       points: 1200,
       picture: 'https://i.pravatar.cc/60?img=50',
+      sorting: [
+        { points: 100, date: new Date(2025, 5, 5) },
+        { points: 50, date: new Date(2025, 5, 2) },
+      ],
     },
     {
       rank: 3,
       name: 'Charlie',
       points: 1100,
       picture: 'https://i.pravatar.cc/60?img=18',
+      sorting: [
+        { points: 100, date: new Date(2025, 5, 5) },
+        { points: 50, date: new Date(2025, 5, 2) },
+      ],
     },
     {
       rank: 4,
       name: 'Anne',
       points: 950,
       picture: 'https://i.pravatar.cc/60?img=19',
+      sorting: [
+        { points: 100, date: new Date(2025, 4, 1) },
+        { points: 50, date: new Date(2025, 4, 2) },
+      ],
     },
     {
       rank: 5,
       name: 'Eve',
       points: 900,
       picture: 'https://i.pravatar.cc/60?img=20',
+      sorting: [
+        { points: 100, date: new Date(2025, 4, 1) },
+        { points: 50, date: new Date(2025, 4, 2) },
+      ],
     },
     {
       rank: 6,
       name: 'Fiona',
       points: 850,
       picture: 'https://i.pravatar.cc/60?img=21',
+      sorting: [
+        { points: 100, date: new Date(2025, 5, 5) },
+        { points: 50, date: new Date(2025, 5, 6) },
+      ],
     },
     {
       rank: 7,
       name: 'Aline',
       points: 800,
       picture: 'https://i.pravatar.cc/60?img=36',
+      sorting: [
+        { points: 100, date: new Date(2025, 4, 1) },
+        { points: 50, date: new Date(2025, 4, 2) },
+      ],
     },
     {
       rank: 8,
       name: 'George',
       points: 750,
       picture: 'https://i.pravatar.cc/60?img=65',
+      sorting: [
+        { points: 100, date: new Date(2025, 5, 5) },
+        { points: 50, date: new Date(2025, 5, 6) },
+      ],
     },
     {
       rank: 9,
       name: 'Hannah',
       points: 700,
       picture: 'https://i.pravatar.cc/60?img=24',
+      sorting: [
+        { points: 100, date: new Date(2025, 5, 5) },
+        { points: 50, date: new Date(2025, 5, 6) },
+      ],
     },
     {
       rank: 10,
       name: 'Ivan',
       points: 650,
       picture: 'https://i.pravatar.cc/60?img=68',
+      sorting: [
+        { points: 100, date: new Date(2025, 5, 25) },
+        { points: 50, date: new Date(2025, 5, 24) },
+      ],
     },
   ];
 
@@ -143,6 +183,16 @@ export default function App() {
       borderWidth: 1,
       borderColor: '#ccc',
     },
+    sortingButtonStyle: {
+      backgroundColor: 'yellow',
+    },
+    sortingButtonActiveStyle: {
+      backgroundColor: 'red',
+    },
+    sortingTextActiveStyle: {
+      color: 'orange',
+    },
+    sortingPosition: 'top',
   };
 
   console.log(darkStyle);
@@ -151,6 +201,8 @@ export default function App() {
     <Leaderboard
       entries={data}
       showPodium={true}
+      showSortingTypes={false}
+      showSearchBar={false}
       style={darkStyle} // Custom style
       customProfile={(user, onClose) => {
         // Custom profile component

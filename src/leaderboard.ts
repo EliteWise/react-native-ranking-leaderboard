@@ -14,6 +14,11 @@ export interface LeaderboardStyle {
   };
   profileStyle?: ProfileStyle;
   searchBarStyle?: ViewStyle;
+  sortingButtonStyle?: ViewStyle;
+  sortingButtonActiveStyle?: ViewStyle;
+  sortingTextStyle?: TextStyle;
+  sortingTextActiveStyle?: TextStyle;
+  sortingPosition?: 'top' | 'bottom';
 }
 
 export interface ProfileStyle {
@@ -40,4 +45,8 @@ export default interface LeaderboardEntry {
   picture?: string;
   name: string;
   points: number;
+  sorting?: {
+    points: number;
+    date: Date;
+  }[];
 }

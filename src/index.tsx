@@ -10,12 +10,14 @@ import {
 import type LeaderboardEntry from './leaderboard';
 import type { LeaderboardStyle } from './leaderboard';
 import { useState } from 'react';
-import { LeaderboardProfile } from './profile';
+import { LeaderboardProfile } from './Profile';
+import { SortingTypes } from './SortingTypes';
 
 type LeaderboardProps = {
   entries: LeaderboardEntry[];
   showPodium?: boolean;
   showSearchBar?: boolean;
+  showSortingTypes?: boolean;
   enableProfiles?: boolean;
   style?: LeaderboardStyle;
   customProfile?: (
@@ -29,6 +31,7 @@ export function Leaderboard({
   style,
   showPodium = true,
   showSearchBar = true,
+  showSortingTypes = false,
   enableProfiles = true,
   customProfile,
 }: LeaderboardProps) {
@@ -40,7 +43,79 @@ export function Leaderboard({
   // Search Bar
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredEntries = entries.filter((entry) =>
+  function getWeekRange(date: Date) {
+    const d = new Date(date);
+    const day = d.getDay();
+    const diff = day === 0 ? -6 : 1 - day; // lundi = jour 1
+    const start = new Date(d);
+    start.setDate(d.getDate() + diff);
+    start.setHours(0, 0, 0, 0);
+
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+    end.setHours(23, 59, 59, 999);
+
+    return { start, end };
+  }
+
+  function getMonthRange(date: Date) {
+    const d = new Date(date);
+    const start = new Date(d.getFullYear(), d.getMonth(), 1);
+    start.setHours(0, 0, 0, 0);
+
+    const end = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+    end.setHours(23, 59, 59, 999);
+
+    return { start, end };
+  }
+
+  // Sorting Feature
+  function filterByDateRange(
+    data: LeaderboardEntry[],
+    startDate: Date,
+    endDate: Date
+  ): LeaderboardEntry[] {
+    return data
+      .map((user) => {
+        const filteredScores = user.sorting?.filter(
+          (sorting) => sorting.date >= startDate && sorting.date <= endDate
+        );
+        const totalPoints =
+          filteredScores?.reduce((sum, score) => sum + score.points, 0) ?? 0;
+
+        return {
+          ...user,
+          points: totalPoints,
+        };
+      })
+      .filter((user) => (user.points ?? 0) > 0)
+      .sort((a, b) => (b.points ?? 0) - (a.points ?? 0));
+  }
+
+  const now = new Date();
+  let displayedEntries: LeaderboardEntry[] = [];
+
+  const [sorting, setSorting] = useState<'weekly' | 'monthly' | 'alltime'>(
+    'alltime'
+  );
+
+  const sortingTypes: ('weekly' | 'monthly' | 'alltime')[] = [
+    'weekly',
+    'monthly',
+    'alltime',
+  ];
+
+  if (sorting === 'weekly') {
+    const { start, end } = getWeekRange(now);
+    displayedEntries = filterByDateRange(entries, start, end);
+  } else if (sorting === 'monthly') {
+    const { start, end } = getMonthRange(now);
+    displayedEntries = filterByDateRange(entries, start, end);
+  } else {
+    displayedEntries = entries;
+  }
+
+  const filteredEntries = displayedEntries.filter((entry) =>
     entry.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -52,16 +127,6 @@ export function Leaderboard({
 
   const isSearchActive = searchQuery.trim() !== '';
   const rankOffset = showPodium && !isSearchActive ? 3 : 0;
-
-  /*const [sorting, setSorting] = useState<'weekly' | 'monthly' | 'alltime'>(
-    'alltime'
-  );
-
-  const sortingTypes: ('weekly' | 'monthly' | 'alltime')[] = [
-    'weekly',
-    'monthly',
-    'alltime',
-  ];*/
 
   if (!entries || entries.length === 0) {
     return (
@@ -86,6 +151,17 @@ export function Leaderboard({
           placeholderTextColor="#999"
           value={searchQuery}
           onChangeText={setSearchQuery}
+        />
+      )}
+      {showSortingTypes && style?.sortingPosition === 'top' && (
+        <SortingTypes
+          sortingTypes={sortingTypes}
+          sorting={sorting}
+          setSorting={setSorting}
+          showSortingTypes={showSortingTypes}
+          style={style}
+          styles={styles}
+          sortingPosition="top"
         />
       )}
       {showPodium && searchQuery.trim() === '' && podiumEntries.length >= 1 && (
@@ -236,13 +312,17 @@ export function Leaderboard({
           style={style?.profileStyle}
         />
       )}
-      {/*<View style={styles.sortingTypesContainer}>
-        {sortingTypes.map(st => (
-          <TouchableOpacity key={st} onPress={() => setSorting(st)} style={[styles.sortingButton, sorting === st && styles.sortingButtonActive]}>
-            <Text style={[styles.sortingText, sorting === st && styles.sortingTextActive]}>{st.charAt(0).toUpperCase() + st.slice(1)}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>*/}
+      {showSortingTypes && style?.sortingPosition === 'bottom' && (
+        <SortingTypes
+          sortingTypes={sortingTypes}
+          sorting={sorting}
+          setSorting={setSorting}
+          showSortingTypes={showSortingTypes}
+          style={style}
+          styles={styles}
+          sortingPosition="bottom"
+        />
+      )}
     </View>
   );
 }
