@@ -2,12 +2,12 @@ import { Leaderboard } from 'react-native-ranking-leaderboard';
 import type LeaderboardEntry from '../../src/leaderboard';
 import CustomProfile from './CustomProfile';
 import type { LeaderboardStyle } from '../../src/leaderboard';
-import { View } from 'react-native';
+import { Text, View } from 'react-native';
+import { ArrowDownRight, ArrowUpRight, Minus } from 'lucide-react-native';
 
 export default function App() {
   const data: LeaderboardEntry[] = [
     {
-      rank: 1,
       name: 'EliteWise',
       points: 1500,
       picture: 'https://i.pravatar.cc/60?img=3',
@@ -17,17 +17,17 @@ export default function App() {
       ],
     },
     {
-      rank: 2,
       name: 'Bob',
       points: 1200,
       picture: 'https://i.pravatar.cc/60?img=50',
       sorting: [
-        { points: 100, date: new Date(2025, 5, 5) },
-        { points: 50, date: new Date(2025, 5, 2) },
+        { points: 26, date: new Date(2025, 4, 5) },
+        { points: 33, date: new Date(2025, 4, 2) },
+        { points: 88, date: new Date(2025, 5, 5) },
+        { points: 105, date: new Date(2025, 5, 2) },
       ],
     },
     {
-      rank: 3,
       name: 'Charlie',
       points: 1100,
       picture: 'https://i.pravatar.cc/60?img=18',
@@ -37,76 +37,79 @@ export default function App() {
       ],
     },
     {
-      rank: 4,
       name: 'Anne',
       points: 950,
       picture: 'https://i.pravatar.cc/60?img=19',
       sorting: [
-        { points: 100, date: new Date(2025, 4, 1) },
-        { points: 50, date: new Date(2025, 4, 2) },
+        { points: 121, date: new Date(2025, 5, 9) },
+        { points: 50, date: new Date(2025, 5, 9) },
       ],
     },
     {
-      rank: 5,
       name: 'Eve',
       points: 900,
       picture: 'https://i.pravatar.cc/60?img=20',
       sorting: [
-        { points: 100, date: new Date(2025, 4, 1) },
-        { points: 50, date: new Date(2025, 4, 2) },
+        { points: 100, date: new Date(2025, 5, 9) },
+        { points: 50, date: new Date(2025, 5, 9) },
       ],
     },
     {
-      rank: 6,
       name: 'Fiona',
       points: 850,
       picture: 'https://i.pravatar.cc/60?img=21',
       sorting: [
-        { points: 100, date: new Date(2025, 5, 5) },
+        { points: 224, date: new Date(2025, 5, 5) },
         { points: 50, date: new Date(2025, 5, 6) },
       ],
     },
     {
-      rank: 7,
       name: 'Aline',
       points: 800,
       picture: 'https://i.pravatar.cc/60?img=36',
       sorting: [
-        { points: 100, date: new Date(2025, 4, 1) },
-        { points: 50, date: new Date(2025, 4, 2) },
+        { points: 220, date: new Date(2025, 5, 9) },
+        { points: 50, date: new Date(2025, 5, 9) },
       ],
     },
     {
-      rank: 8,
       name: 'George',
       points: 750,
       picture: 'https://i.pravatar.cc/60?img=65',
       sorting: [
-        { points: 100, date: new Date(2025, 5, 5) },
+        { points: 102, date: new Date(2025, 5, 5) },
         { points: 50, date: new Date(2025, 5, 6) },
       ],
     },
     {
-      rank: 9,
       name: 'Hannah',
       points: 700,
       picture: 'https://i.pravatar.cc/60?img=24',
       sorting: [
-        { points: 100, date: new Date(2025, 5, 5) },
-        { points: 50, date: new Date(2025, 5, 6) },
+        { points: 360, date: new Date(2025, 5, 5) },
+        { points: 150, date: new Date(2025, 5, 9) },
+        { points: 50, date: new Date(2025, 5, 1) },
+        { points: 50, date: new Date(2025, 4, 28) },
       ],
     },
     {
-      rank: 10,
       name: 'Ivan',
       points: 650,
       picture: 'https://i.pravatar.cc/60?img=68',
       sorting: [
-        { points: 100, date: new Date(2025, 5, 25) },
-        { points: 50, date: new Date(2025, 5, 24) },
+        { points: 10, date: new Date(2025, 4, 4) },
+        { points: 30, date: new Date(2025, 4, 5) },
+        { points: 50, date: new Date(2025, 5, 10) },
+        { points: 66, date: new Date(2025, 5, 11) },
       ],
     },
   ];
+
+  const RankDifferenceIcon = (difference: number) => {
+    if (difference < 0) return <ArrowDownRight color="red" size={20} />;
+    if (difference > 0) return <ArrowUpRight color="green" size={20} />;
+    return <Minus color="gray" size={20} />;
+  };
 
   const darkStyle: LeaderboardStyle = {
     containerStyle: {
@@ -192,7 +195,24 @@ export default function App() {
     sortingTextActiveStyle: {
       color: 'orange',
     },
-    sortingPosition: 'top',
+    sortingPosition: 'bottom',
+    rankDifferenceIcon: RankDifferenceIcon,
+    podiumRankRenderer: (rank) => {
+      switch (rank) {
+        case 1:
+          return <Text style={{ color: 'gold', fontSize: 12 }}>🥇 Top 1</Text>;
+        case 2:
+          return (
+            <Text style={{ color: 'silver', fontSize: 12 }}>🥈 Top 2</Text>
+          );
+        case 3:
+          return (
+            <Text style={{ color: 'bronze', fontSize: 12 }}>🥉 Top 3</Text>
+          );
+        default:
+          return <Text>{rank}</Text>;
+      }
+    },
   };
 
   console.log(darkStyle);
@@ -201,9 +221,12 @@ export default function App() {
     <Leaderboard
       entries={data}
       showPodium={true}
-      showSortingTypes={false}
-      showSearchBar={false}
-      style={darkStyle} // Custom style
+      showSortingTypes={true}
+      showSearchBar={true}
+      showRankDifference={true} // Custom style
+      style={{
+        rankDifferenceIcon: RankDifferenceIcon,
+      }}
       customProfile={(user, onClose) => {
         // Custom profile component
         if (!user) return null;

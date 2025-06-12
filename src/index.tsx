@@ -8,7 +8,7 @@ import {
   TextInput,
 } from 'react-native';
 import type LeaderboardEntry from './leaderboard';
-import type { LeaderboardStyle } from './leaderboard';
+import type { LeaderboardEntryDiff, LeaderboardStyle } from './leaderboard';
 import { useState } from 'react';
 import { LeaderboardProfile } from './Profile';
 import { SortingTypes } from './SortingTypes';
@@ -18,10 +18,11 @@ type LeaderboardProps = {
   showPodium?: boolean;
   showSearchBar?: boolean;
   showSortingTypes?: boolean;
+  showRankDifference?: boolean;
   enableProfiles?: boolean;
   style?: LeaderboardStyle;
   customProfile?: (
-    user: LeaderboardEntry | null,
+    user: LeaderboardEntryDiff | null,
     onClose: () => void
   ) => React.ReactNode;
 };
@@ -32,10 +33,11 @@ export function Leaderboard({
   showPodium = true,
   showSearchBar = true,
   showSortingTypes = false,
+  showRankDifference = false,
   enableProfiles = true,
   customProfile,
 }: LeaderboardProps) {
-  const [selectedUser, setSelectedUser] = useState<LeaderboardEntry | null>(
+  const [selectedUser, setSelectedUser] = useState<LeaderboardEntryDiff | null>(
     null
   );
   const [modalVisible, setModalVisible] = useState(false);
@@ -43,6 +45,7 @@ export function Leaderboard({
   // Search Bar
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Get the start and end of the week for a given date (Monday to Sunday)
   function getWeekRange(date: Date) {
     const d = new Date(date);
     const day = d.getDay();
@@ -58,6 +61,7 @@ export function Leaderboard({
     return { start, end };
   }
 
+  // Get the start and end of the month for a given date
   function getMonthRange(date: Date) {
     const d = new Date(date);
     const start = new Date(d.getFullYear(), d.getMonth(), 1);
@@ -69,13 +73,60 @@ export function Leaderboard({
     return { start, end };
   }
 
+  // Current and past dates for filtering
+  const now = new Date();
+  const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+  // Past Ranking comparison
+  const { start: startWeek, end: endWeek } = getWeekRange(oneWeekAgo);
+  const { start: startMonth, end: endMonth } = getMonthRange(oneMonthAgo);
+  const { start, end } = getWeekRange(now);
+
+  const currentWeekRange = filterByDateRange(entries, start, end);
+  const currentMonthRange = filterByDateRange(entries, start, end);
+
+  const lastWeekRange = filterByDateRange(entries, startWeek, endWeek);
+  const lastMonthRange = filterByDateRange(entries, startMonth, endMonth);
+
+  // Map: username → their previous rank (weekly)
+  const lastWeekRanks: { [key: string]: number | undefined } = {};
+
+  lastWeekRange.forEach((user, index) => {
+    lastWeekRanks[user.name] = index + 1;
+  });
+
+  // Map: username → their previous rank (monthly)
+  const lastMonthRanks: { [key: string]: number | undefined } = {};
+
+  lastMonthRange.forEach((user, index) => {
+    lastMonthRanks[user.name] = index + 1;
+  });
+
+  // Calculates rank change between current and past ranking
+  function getRankChange(
+    user: LeaderboardEntryDiff,
+    period: 'weekly' | 'monthly'
+  ): number {
+    const lastRanks = period === 'weekly' ? lastWeekRanks : lastMonthRanks;
+    const currentRange =
+      period === 'weekly' ? currentWeekRange : currentMonthRange;
+
+    const lastRank = lastRanks[user.name] ?? currentRange.length + 1;
+    const currentRank =
+      currentRange.findIndex((u) => u.name === user.name) + 1 ||
+      currentRange.length + 1;
+    return currentRank - lastRank; // Positive = moved down, negative = moved up
+  }
+
   // Sorting Feature
+  // Filters points by a date range and returns sorted leaderboard
   function filterByDateRange(
     data: LeaderboardEntry[],
     startDate: Date,
     endDate: Date
-  ): LeaderboardEntry[] {
-    return data
+  ): LeaderboardEntryDiff[] {
+    const filtered = data
       .map((user) => {
         const filteredScores = user.sorting?.filter(
           (sorting) => sorting.date >= startDate && sorting.date <= endDate
@@ -89,22 +140,32 @@ export function Leaderboard({
         };
       })
       .filter((user) => (user.points ?? 0) > 0)
-      .sort((a, b) => (b.points ?? 0) - (a.points ?? 0));
+      .sort((a, b) => (b.points ?? 0) - (a.points ?? 0)); // Sort descending
+
+    // Recalculate ranks
+    return filtered.map((user, index) => ({
+      ...user,
+      rank: index + 1,
+      rankDifference: 0,
+    }));
   }
 
-  const now = new Date();
-  let displayedEntries: LeaderboardEntry[] = [];
+  // Handle sorting selection
+  const sortingPosition = style?.sortingPosition ?? 'bottom';
 
-  const [sorting, setSorting] = useState<'weekly' | 'monthly' | 'alltime'>(
-    'alltime'
+  let displayedEntries: LeaderboardEntryDiff[] = [];
+
+  const [sorting, setSorting] = useState<'weekly' | 'monthly' | 'general'>(
+    'general'
   );
 
-  const sortingTypes: ('weekly' | 'monthly' | 'alltime')[] = [
+  const sortingTypes: ('weekly' | 'monthly' | 'general')[] = [
     'weekly',
     'monthly',
-    'alltime',
+    'general',
   ];
 
+  // Depending on selected sorting type, update displayed entries
   if (sorting === 'weekly') {
     const { start, end } = getWeekRange(now);
     displayedEntries = filterByDateRange(entries, start, end);
@@ -112,22 +173,42 @@ export function Leaderboard({
     const { start, end } = getMonthRange(now);
     displayedEntries = filterByDateRange(entries, start, end);
   } else {
-    displayedEntries = entries;
+    displayedEntries = entries.map((user, index) => ({
+      ...user,
+      rank: index + 1,
+      rankDifference: 0,
+    }));
   }
 
+  // Search bar filter
   const filteredEntries = displayedEntries.filter((entry) =>
     entry.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const podiumEntries = filteredEntries.slice(0, 3);
-  const restEntries =
+
+  // Handle display of rest of the list (excluding podium if enabled)
+  const baseRestEntries =
     searchQuery.trim() === '' && showPodium
       ? filteredEntries.slice(3)
       : filteredEntries;
 
+  // Attach rank changes if sorting is weekly or monthly
+  const restEntries: LeaderboardEntryDiff[] =
+    sorting === 'weekly' || sorting === 'monthly'
+      ? baseRestEntries.map((user) => ({
+          ...user,
+          rankDifference: getRankChange(user, sorting),
+        }))
+      : baseRestEntries.map((user) => ({
+          ...user,
+          rankDifference: 0,
+        }));
+
   const isSearchActive = searchQuery.trim() !== '';
   const rankOffset = showPodium && !isSearchActive ? 3 : 0;
 
+  // Handle empty state
   if (!entries || entries.length === 0) {
     return (
       <View
@@ -153,7 +234,7 @@ export function Leaderboard({
           onChangeText={setSearchQuery}
         />
       )}
-      {showSortingTypes && style?.sortingPosition === 'top' && (
+      {showSortingTypes && sortingPosition === 'top' && (
         <SortingTypes
           sortingTypes={sortingTypes}
           sorting={sorting}
@@ -190,9 +271,17 @@ export function Leaderboard({
                   style?.podiumStyle?.second,
                 ]}
               >
-                <Text style={styles.podiumRank}>2</Text>
+                <Text style={styles.podiumRank}>
+                  {style?.podiumRankRenderer
+                    ? style?.podiumRankRenderer?.(2)
+                    : '2'}
+                </Text>
               </View>
-              <Text style={styles.playerName}>{podiumEntries[1]?.name}</Text>
+              <Text style={styles.playerName}>
+                {style?.podiumNameRenderer
+                  ? style?.podiumNameRenderer(podiumEntries[1])
+                  : podiumEntries[1]?.name}
+              </Text>
             </TouchableOpacity>
           )}
 
@@ -220,9 +309,17 @@ export function Leaderboard({
                   style?.podiumStyle?.first,
                 ]}
               >
-                <Text style={styles.podiumRank}>1</Text>
+                <Text style={styles.podiumRank}>
+                  {style?.podiumRankRenderer
+                    ? style?.podiumRankRenderer?.(1)
+                    : '1'}
+                </Text>
               </View>
-              <Text style={styles.playerName}>{podiumEntries[0]?.name}</Text>
+              <Text style={styles.playerName}>
+                {style?.podiumNameRenderer
+                  ? style?.podiumNameRenderer(podiumEntries[0])
+                  : podiumEntries[0]?.name}
+              </Text>
             </TouchableOpacity>
           )}
 
@@ -250,9 +347,17 @@ export function Leaderboard({
                   style?.podiumStyle?.third,
                 ]}
               >
-                <Text style={styles.podiumRank}>3</Text>
+                <Text style={styles.podiumRank}>
+                  {style?.podiumRankRenderer
+                    ? style?.podiumRankRenderer?.(3)
+                    : '3'}
+                </Text>
               </View>
-              <Text style={styles.playerName}>{podiumEntries[2]?.name}</Text>
+              <Text style={styles.playerName}>
+                {style?.podiumNameRenderer
+                  ? style?.podiumNameRenderer(podiumEntries[2])
+                  : podiumEntries[2]?.name}
+              </Text>
             </TouchableOpacity>
           )}
         </View>
@@ -290,9 +395,23 @@ export function Leaderboard({
                 {item.name}
               </Text>
             )}
-            <Text style={[styles.itemPoints, style?.pointStyle]}>
-              {item.points}
-            </Text>
+            <View style={styles.pointsAndRankDiffContainer}>
+              <Text style={[styles.itemPoints, style?.pointStyle]}>
+                {item.points}
+              </Text>
+              {showRankDifference &&
+                (sorting === 'monthly' || sorting === 'weekly') && (
+                  <Text style={styles.rankDifference}>
+                    {style?.rankDifferenceIcon
+                      ? style?.rankDifferenceIcon(item.rankDifference)
+                      : item.rankDifference > 0
+                        ? `↑ ${item.rankDifference}`
+                        : item.rankDifference < 0
+                          ? `↓ ${Math.abs(item.rankDifference)}`
+                          : '➖'}
+                  </Text>
+                )}
+            </View>
           </TouchableOpacity>
         )}
       />
@@ -312,7 +431,7 @@ export function Leaderboard({
           style={style?.profileStyle}
         />
       )}
-      {showSortingTypes && style?.sortingPosition === 'bottom' && (
+      {showSortingTypes && sortingPosition === 'bottom' && (
         <SortingTypes
           sortingTypes={sortingTypes}
           sorting={sorting}
@@ -416,6 +535,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginHorizontal: 10,
     textAlign: 'right',
+    color: '#2c3e50',
   },
   emptyText: {
     fontSize: 16,
@@ -455,5 +575,16 @@ const styles = StyleSheet.create({
   },
   sortingButtonActive: {
     backgroundColor: '#2c3e50',
+  },
+  pointsAndRankDiffContainer: {
+    flexDirection: 'row',
+  },
+  rankDifference: {
+    width: 40,
+    paddingLeft: 18,
+    textAlign: 'left',
+    fontSize: 14,
+    color: '#888',
+    fontWeight: '500',
   },
 });

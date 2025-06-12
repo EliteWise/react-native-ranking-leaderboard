@@ -51,6 +51,9 @@ const data = [
 <Leaderboard
   entries={data}
   showPodium={true}
+  showSortingTypes={true}
+  showSearchBar={true}
+  showRankDifference={false}
   style={{
     containerStyle: { backgroundColor: '#f0f0f0' },
     podiumStyle: {
@@ -99,6 +102,28 @@ const CustomProfile = ({ user, onClose }: CustomProfileProps) => {
   entries={data}
   showPodium={false}
   customProfile={(user, onClose) => <CustomProfile user={user} onClose={onClose} />}
+/>
+```
+
+```tsx
+// Customize Rank Difference
+
+import { ArrowDownRight, ArrowUpRight, Minus } from 'lucide-react-native';
+
+const RankDifferenceIcon = (difference: number) => {
+  if (difference < 0) return <ArrowDownRight color="red" size={20} />;
+  if (difference > 0) return <ArrowUpRight color="green" size={20} />;
+  return <Minus color="gray" size={20} />;
+};
+
+<Leaderboard
+  entries={data}
+  showPodium={false}
+  showSortingTypes={true} // Show buttons 'weekly' / 'monthly' / 'all time'
+  showRankDifference={true} // Displays the change in user rankings compared to the previous week or month
+  style={{
+    rankDifferenceIcon: RankDifferenceIcon,
+  }}
 />
 ```
 

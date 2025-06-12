@@ -12,6 +12,8 @@ export interface LeaderboardStyle {
     second?: ViewStyle;
     third?: ViewStyle;
   };
+  podiumNameRenderer?: (user: LeaderboardEntry | undefined) => React.ReactNode;
+  podiumRankRenderer?: (rank: number) => React.ReactNode;
   profileStyle?: ProfileStyle;
   searchBarStyle?: ViewStyle;
   sortingButtonStyle?: ViewStyle;
@@ -19,6 +21,7 @@ export interface LeaderboardStyle {
   sortingTextStyle?: TextStyle;
   sortingTextActiveStyle?: TextStyle;
   sortingPosition?: 'top' | 'bottom';
+  rankDifferenceIcon?: (difference: number) => React.ReactNode;
 }
 
 export interface ProfileStyle {
@@ -41,7 +44,6 @@ export interface ProfileStyle {
 }
 
 export default interface LeaderboardEntry {
-  rank?: number;
   picture?: string;
   name: string;
   points: number;
@@ -50,3 +52,8 @@ export default interface LeaderboardEntry {
     date: Date;
   }[];
 }
+
+export type LeaderboardEntryDiff = LeaderboardEntry & {
+  rankDifference: number;
+  rank: number;
+};

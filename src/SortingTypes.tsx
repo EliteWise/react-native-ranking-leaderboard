@@ -9,9 +9,9 @@ export const SortingTypes = ({
   styles,
   sortingPosition,
 }: {
-  sortingTypes: ('weekly' | 'monthly' | 'alltime')[];
+  sortingTypes: ('weekly' | 'monthly' | 'general')[];
   sorting: string;
-  setSorting: (value: 'weekly' | 'monthly' | 'alltime') => void;
+  setSorting: (value: 'weekly' | 'monthly' | 'general') => void;
   showSortingTypes: boolean;
   style?: any;
   styles: any;
@@ -23,7 +23,7 @@ export const SortingTypes = ({
     <View
       style={[
         styles.sortingTypesContainer,
-        sortingPosition == 'top' ? { marginBottom: 10 } : null,
+        sortingPosition == 'top' ? { marginBottom: 20 } : null,
       ]}
     >
       {sortingTypes.map((st) => (

@@ -7,11 +7,11 @@ import {
   ScrollView,
   Dimensions,
 } from 'react-native';
-import type LeaderboardEntry from '../../src/leaderboard';
 import { useState } from 'react';
+import type { LeaderboardEntryDiff } from '../../src/leaderboard';
 
 type Props = {
-  user: LeaderboardEntry | null | undefined;
+  user: LeaderboardEntryDiff | null | undefined;
   onClose: () => void;
 };
 
@@ -23,7 +23,7 @@ const CustomProfile = ({ user, onClose }: Props) => {
   if (!user) {
     return (
       <View style={styles.overlay}>
-        <View style={[styles.container, styles.centerContainer]}>
+        <View style={[styles.container]}>
           <Text style={styles.name}>User not found.</Text>
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
             <Text style={styles.closeText}>✕</Text>
@@ -84,84 +84,103 @@ const CustomProfile = ({ user, onClose }: Props) => {
 
 const styles = StyleSheet.create({
   overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width,
-    height,
-    backgroundColor: 'rgba(255, 255, 255, 0.85)', // fond clair et translucide
+    flex: 1,
+    backgroundColor: 'rgba(10, 25, 47, 0.85)', // nuit sombre bleutée
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 18,
   },
   container: {
-    backgroundColor: '#f0f4f8', // blanc cassé très clair
-    borderRadius: 20,
-    width: width * 0.85,
-    maxHeight: height * 0.75,
-    padding: 24,
-    shadowColor: '#888',
-    shadowOpacity: 0.4,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
-  },
-  centerContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: '#1c2431',
+    borderRadius: 32,
+    width: width * 0.88,
+    maxHeight: height * 0.78,
+    paddingVertical: 28,
+    paddingHorizontal: 28,
+    shadowColor: '#3f51b5',
+    shadowOpacity: 0.6,
+    shadowRadius: 24,
+    shadowOffset: { width: 0, height: 12 },
+    elevation: 5,
+    overflow: 'hidden',
   },
   closeButton: {
     position: 'absolute',
-    top: 12,
-    right: 12,
+    top: 14,
+    right: 14,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#2e374f',
+    justifyContent: 'center',
+    alignItems: 'center',
     zIndex: 10,
   },
   closeText: {
-    fontSize: 28,
-    color: '#ff6b6b', // rouge doux
+    fontSize: 22,
+    color: '#f2f2f2',
+    fontWeight: '600',
+    lineHeight: 22,
   },
   centered: {
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 10,
   },
   avatar: {
     width: 140,
     height: 140,
     borderRadius: 70,
-    marginBottom: 12,
-    borderWidth: 3,
-    borderColor: '#4a90e2', // bleu doux
-    backgroundColor: '#eee',
+    marginBottom: 18,
+    borderWidth: 4,
+    borderColor: '#7e57c2',
+    backgroundColor: '#222b44',
+    shadowColor: '#7e57c2',
+    shadowOpacity: 0.9,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 8 },
   },
   name: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#2c3e50', // bleu foncé
+    fontSize: 30,
+    fontWeight: '900',
+    color: '#e0d7f5',
+    letterSpacing: 1.3,
+    textShadowColor: '#7e57c2',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 6,
   },
   rank: {
     fontSize: 18,
-    color: '#4a90e2', // bleu doux
-    marginTop: 4,
+    fontWeight: '600',
+    color: '#b39ddb',
+    marginTop: 6,
+    letterSpacing: 0.7,
   },
   tabs: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 24,
-    borderBottomWidth: 1,
-    borderBottomColor: '#d0d7de',
+    justifyContent: 'center',
+    marginTop: 32,
+    gap: 16,
   },
   tabText: {
-    fontSize: 20,
-    color: '#7f8c8d', // gris doux
-    paddingBottom: 8,
+    fontSize: 18,
+    fontWeight: '700',
+    paddingVertical: 8,
+    paddingHorizontal: 28,
+    borderRadius: 24,
+    color: '#9381ff',
+    backgroundColor: '#2e2a59',
   },
   activeTab: {
-    color: '#4a90e2',
-    borderBottomWidth: 3,
-    borderBottomColor: '#4a90e2',
-    fontWeight: '700',
+    backgroundColor: '#7e57c2',
+    color: '#fff',
+    shadowColor: '#7e57c2',
+    shadowOpacity: 0.6,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 2,
   },
   content: {
-    marginTop: 20,
+    marginTop: 30,
     flex: 1,
   },
   statsContainer: {
@@ -170,24 +189,27 @@ const styles = StyleSheet.create({
   },
   statBox: {
     alignItems: 'center',
-    marginHorizontal: 20,
+    marginHorizontal: 34,
   },
   statNumber: {
-    fontSize: 40,
-    fontWeight: 'bold',
-    color: '#4a90e2',
+    fontSize: 42,
+    fontWeight: '900',
+    color: '#d1c4e9',
   },
   statLabel: {
-    fontSize: 18,
-    color: '#95a5a6', // gris clair
-    marginTop: 4,
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#9fa8da',
+    marginTop: 8,
   },
   bioScroll: {
-    maxHeight: 150,
+    maxHeight: 180,
   },
   bioText: {
-    fontSize: 16,
-    color: '#34495e',
+    fontSize: 17,
+    fontWeight: '500',
+    color: '#cbc2f7',
+    lineHeight: 26,
   },
 });
 
