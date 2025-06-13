@@ -6,9 +6,12 @@ I’ve always been obsessed with rankings in games — So I decided to turn that
 
 ## Features
 
-- 🥇 Podium for top 3 users
-- 📋 Scrollable list
-- 👤 Tap a user to open their profile
+- 🥇 **Podium** for top 3 users
+- 📋 **Scrollable list**
+- 👤 Tap a user to open their **profile**
+- 🔍 **Search bar**
+- 📆 **Weekly / Monthly rankings**
+- 📈 **Rank change indicators** ↑ ↓
 - 🎨 Fully customizable styles via props
 
 ## Preview
@@ -38,10 +41,29 @@ npm install react-native-ranking-leaderboard
 ## How to use it?
 
 ```ts
+// Data must contain at least 'name' and 'points' fields
+// 'sorting' field is only used for weekly or monthly rankings
 const data = [
-  { name: 'Alice', points: 1200, picture: 'https://example.com/alice.jpg' },
-  { name: 'Bob', points: 1100, picture: 'https://example.com/bob.jpg' },
-  { name: 'Charlie', points: 1000, picture: 'https://example.com/charlie.jpg' },
+  {
+    name: 'Alice', points: 1200, picture: 'https://example.com/alice.jpg',
+    sorting: [
+      { points: 100, date: new Date(2025, 4, 1) },
+      { points: 50, date: new Date(2025, 4, 2) },
+    ],
+  },
+  {
+    name: 'Bob', points: 1100, picture: 'https://example.com/bob.jpg',
+    sorting: [
+      { points: 80, date: new Date(2025, 4, 1) },
+      { points: 60, date: new Date(2025, 4, 3) },
+    ],
+  },
+  {
+    name: 'Charlie', points: 1000, picture: 'https://example.com/charlie.jpg',
+    sorting: [
+      { points: 70, date: new Date(2025, 4, 1) },
+    ],
+  },
   { name: 'Daisy', points: 950, picture: 'https://example.com/daisy.jpg' },
   { name: 'Ethan', points: 900 },
 ];
@@ -119,8 +141,10 @@ const RankDifferenceIcon = (difference: number) => {
 <Leaderboard
   entries={data}
   showPodium={false}
-  showSortingTypes={true} // Show buttons 'weekly' / 'monthly' / 'all time'
-  showRankDifference={true} // Displays the change in user rankings compared to the previous week or month
+  // Show buttons 'weekly' / 'monthly' / 'all time'
+  showSortingTypes={true}
+  // Displays the change in user rankings compared to the previous week or month
+  showRankDifference={true}
   style={{
     rankDifferenceIcon: RankDifferenceIcon,
   }}

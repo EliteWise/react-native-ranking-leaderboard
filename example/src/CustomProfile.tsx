@@ -56,7 +56,7 @@ const CustomProfile = ({ user, onClose }: Props) => {
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setTab('about')}>
             <Text style={[styles.tabText, tab === 'about' && styles.activeTab]}>
-              About
+              Details
             </Text>
           </TouchableOpacity>
         </View>
@@ -85,23 +85,23 @@ const CustomProfile = ({ user, onClose }: Props) => {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(10, 25, 47, 0.85)', // nuit sombre bleutée
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 18,
   },
   container: {
-    backgroundColor: '#1c2431',
+    backgroundColor: '#ffffff',
     borderRadius: 32,
     width: width * 0.88,
     maxHeight: height * 0.78,
     paddingVertical: 28,
     paddingHorizontal: 28,
-    shadowColor: '#3f51b5',
-    shadowOpacity: 0.6,
-    shadowRadius: 24,
-    shadowOffset: { width: 0, height: 12 },
-    elevation: 5,
+    shadowColor: '#aaa',
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 4,
     overflow: 'hidden',
   },
   closeButton: {
@@ -111,14 +111,14 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#2e374f',
+    backgroundColor: '#f0f0f0',
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 10,
   },
   closeText: {
     fontSize: 22,
-    color: '#f2f2f2',
+    color: '#444',
     fontWeight: '600',
     lineHeight: 22,
   },
@@ -131,29 +131,26 @@ const styles = StyleSheet.create({
     height: 140,
     borderRadius: 70,
     marginBottom: 18,
-    borderWidth: 4,
-    borderColor: '#7e57c2',
-    backgroundColor: '#222b44',
-    shadowColor: '#7e57c2',
-    shadowOpacity: 0.9,
-    shadowRadius: 18,
-    shadowOffset: { width: 0, height: 8 },
+    borderWidth: 3,
+    borderColor: '#a7c7ff',
+    backgroundColor: '#e6f0ff',
+    shadowColor: '#a7c7ff',
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
   },
   name: {
     fontSize: 30,
     fontWeight: '900',
-    color: '#e0d7f5',
-    letterSpacing: 1.3,
-    textShadowColor: '#7e57c2',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 6,
+    color: '#333',
+    letterSpacing: 1.1,
   },
   rank: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#b39ddb',
+    color: '#666',
     marginTop: 6,
-    letterSpacing: 0.7,
+    letterSpacing: 0.5,
   },
   tabs: {
     flexDirection: 'row',
@@ -167,17 +164,17 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 28,
     borderRadius: 24,
-    color: '#9381ff',
-    backgroundColor: '#2e2a59',
+    color: '#4a90e2',
+    backgroundColor: '#e9f2ff',
   },
   activeTab: {
-    backgroundColor: '#7e57c2',
+    backgroundColor: '#4a90e2',
     color: '#fff',
-    shadowColor: '#7e57c2',
-    shadowOpacity: 0.6,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 2,
+    shadowColor: '#4a90e2',
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 1,
   },
   content: {
     marginTop: 30,
@@ -194,12 +191,12 @@ const styles = StyleSheet.create({
   statNumber: {
     fontSize: 42,
     fontWeight: '900',
-    color: '#d1c4e9',
+    color: '#333',
   },
   statLabel: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#9fa8da',
+    color: '#666',
     marginTop: 8,
   },
   bioScroll: {
@@ -208,7 +205,7 @@ const styles = StyleSheet.create({
   bioText: {
     fontSize: 17,
     fontWeight: '500',
-    color: '#cbc2f7',
+    color: '#444',
     lineHeight: 26,
   },
 });
